@@ -1,0 +1,5 @@
+.swp
+.DS_Store
+.gdb_history
+*.i64
+peda-session-*
