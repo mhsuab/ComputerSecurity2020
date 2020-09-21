@@ -15,11 +15,11 @@
       ```js
       if (typeof username !== "string" || typeof cute !== "string" || username === "" || !cute.match("(true|false)$"))
       ```
-      1. `userInfo` take `cute` from the request query directly
+      b. `userInfo` take `cute` from the request query directly
       ```js
       const userInfo = `{"username":"${username}","admin":false,"cute":${cute}}`;
       ```
-      1. use `userInfo` define in the previous step in the url and be used to `GET` **internally**
+      c. use `userInfo` define in the previous step in the url and be used to `GET` **internally**
       ```js
       const api = `http://127.0.0.1:9487/?data=${userInfo}&givemeflag=no`;
       ```
