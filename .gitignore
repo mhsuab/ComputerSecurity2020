@@ -1,5 +1,13 @@
 .swp
 .DS_Store
 .gdb_history
-*.i64
 peda-session-*
+objdump
+
+# ida
+*.i64
+*.id0
+*.id1
+*.id2
+*.nam
+*.til
