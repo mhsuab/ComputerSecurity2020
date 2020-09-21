@@ -33,12 +33,12 @@
    1. want something like this, `https://owohub.zoolab.org/auth?username=a&cute=true,"admin":true}&givemeflag=yes#true`
       > `}` close the bracket for `useInfo` which make all the things after it not a part of `userInfo`  
       > `#` point a browser to a specific part or page but all characters after `#` will not be sent in request  
-     - make `api` to be `http://127.0.0.1:9487/?data={"username":"a","admin":true,"cute":false}&givemeflag=yes#true&givemeflag=no`
-     - then the actual request being send internally should be `http://127.0.0.1:9487/?data={"username":"a","admin":true,"cute":false}&givemeflag=yes`
-   2. try and get `{"error":"Whaaaat owo?"}`
-     - currently, `cute` is `false,"admin":true}` so that it doesn't end with `true` or `false`
-     - `cute` only take the part before the next `&`
-   3. *url encoding*
+      - make `api` to be `http://127.0.0.1:9487/?data={"username":"a","admin":true,"cute":false}&givemeflag=yes#true&givemeflag=no`
+      - the actual request being send internally should be `http://127.0.0.1:9487/?data={"username":"a","admin":true,"cute":false}&givemeflag=yes`
+   1. try and get `{"error":"Whaaaat owo?"}`
+      - currently, `cute` is `false,"admin":true}` so that it doesn't end with `true` or `false`
+      - `cute` only take the part before the next `&`
+   1. *url encoding*
       > find the correspoding encode for `"}&#`  
-     - then, the url should be `https://owohub.zoolab.org/auth?username=a&cute=true,%22admin%22:true%7D%26givemeflag=yes%23true`
+      - then, the url should be `https://owohub.zoolab.org/auth?username=a&cute=true,%22admin%22:true%7D%26givemeflag=yes%23true`
 
