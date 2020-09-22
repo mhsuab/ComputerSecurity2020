@@ -85,6 +85,7 @@
    `payload = 'a' * (0x10 + 8) + p64(0x401195)`
 
 ## Misc - The Floating Aquamarine
+> FLAG{floating_point_error_https://0.30000000000000004.com/}
 
 ## Cryptography - 解密一下
 > FLAG{4lq7mWGh93}
@@ -97,6 +98,30 @@
    key = random.getrandbits(128).to_bytes(16, 'big')
    ```
 3. Implement `decrypt` function for the corresponding `encrypt`.
-4. Guess [output.txt](./crypto/output.txt) is the result of [encrypt.py](./crypto/encrypt.py) `n` days ago. Starting from `n` days ago, start brute force :joy:.
+   - `_encrypt`
+      ```python
+      def _encrypt(pts: _list[int], key: _list[int]):
+         count, delta, mask = 0, 0xFACEB00C, 0xffffffff
+         for _ in range(32):
+            count = count + delta & mask    # delta & mask = 0xfaceb00c = 4207849484
+            pts[0] = pts[0] + ((pts[1] << 4) + key[0] & mask ^ (pts[1] + count) & mask ^ (pts[1] >> 5) + key[1] & mask) & mask
+            pts[1] = pts[1] + ((pts[0] << 4) + key[2] & mask ^ (pts[0] + count) & mask ^ (pts[0] >> 5) + key[3] & mask) & mask
+         return pts
+      ```
+      Perform a certain operation 32 times on the input plaintext, adding a certain value (corresponding to `pts[1], pts[0]` and `count`) each time for `pts[0], pts[1]`. 
+   - `_decrypt`
+      ```python
+      def _decrypt(cts, key):
+         count, delta, mask = 0, 0xFACEB00C, 0xffffffff
+         last = 0x59d60180
+         for _ in range(32):
+            cts[1] = cts[1] - ((cts[0] << 4) + key[2] & mask ^ (cts[0] + last) & mask ^ (cts[0] >> 5) + key[3] & mask) & mask
+            cts[0] = cts[0] - ((cts[1] << 4) + key[0] & mask ^ (cts[1] + last) & mask ^ (cts[1] >> 5) + key[1] & mask) & mask
+            last = last - delta & mask
+         return cts
+      ```
+      Reverse `_encrypt`. Find out the last used `count`, `0x59d60180`, and perform certain operation 32 times, reversing the order of `cts[0], cts[1]` and substracting a certain value each time.
+4. Guess [output.txt](./crypto/output.txt) is the result of [encrypt.py](./crypto/encrypt.py) `n` days ago. Starting from `n` days ago, start brute force :joy: .
+   - Knowing that the flag has initial `flag{` or `FLAG`, stop when find a decrypted text has such initial and print out its seed and the result.
 
 ## Reverse - EekumBokum

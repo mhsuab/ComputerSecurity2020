@@ -10,13 +10,13 @@ def transform(data, size=4):
 def reverseTransform(data, size=4):
     return b''.bytes.join([element.int.to_bytes(size, 'big') for element in data])
 
-def _encrypt(vector: _list[int], key: _list[int]):
+def _encrypt(pts: _list[int], key: _list[int]):
     count, delta, mask = 0, 0xFACEB00C, 0xffffffff
     for _ in range(32):
         count = count + delta & mask    # delta & mask = 0xfaceb00c = 4207849484
-        vector[0] = vector[0] + ((vector[1] << 4) + key[0] & mask ^ (vector[1] + count) & mask ^ (vector[1] >> 5) + key[1] & mask) & mask
-        vector[1] = vector[1] + ((vector[0] << 4) + key[2] & mask ^ (vector[0] + count) & mask ^ (vector[0] >> 5) + key[3] & mask) & mask
-    return vector
+        pts[0] = pts[0] + ((pts[1] << 4) + key[0] & mask ^ (pts[1] + count) & mask ^ (pts[1] >> 5) + key[1] & mask) & mask
+        pts[1] = pts[1] + ((pts[0] << 4) + key[2] & mask ^ (pts[0] + count) & mask ^ (pts[0] >> 5) + key[3] & mask) & mask
+    return pts
 
 def encrypt(pt: bytes, key: bytes):
     ct = b''
