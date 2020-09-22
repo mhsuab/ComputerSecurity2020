@@ -85,10 +85,36 @@
    `payload = 'a' * (0x10 + 8) + p64(0x401195)`
 
 ## Misc - The Floating Aquamarine
-> FLAG{floating_point_error_https://0.30000000000000004.com/}
+> FLAG{floating_point_error_https://0.30000000000000004.com/}  
+> [solution](./misc/solve.py)  
+
+From [src.cpp](./hw0/../misc/src.cpp), variable `PRICE, RICH, balance` are `float`. Therefore, the vulnerability may be due the precision of floating point. By buying a large amount and sell with little portion, one can possibly gain money as demonstrated below. By repeat it multiple times, we are able to make `balance` larger than `RICH`.
+```shell
+$ nc hw00.zoolab.org 65535
+Welcome to Aquamarine bank! You can buy/loan and sell Aquamarine here.
+The price of Aquamarine is fixed at 88.88 dollars. No bargaining!
+If your balance >= 3000 dollars, you can get the flag!
+
+Your Aquamarine: 0, balance: 0
+How many Aquamarine stones do you want to buy/loan (positive) or sell (negative)?
+(Remaining Aquamarine in stock: 100000000)
+100000000
+Your Aquamarine: 100000000, balance: -8.888e+09
+How many Aquamarine stones do you want to buy/loan (positive) or sell (negative)?
+(Remaining Aquamarine in stock: 0)
+-3000000
+Your Aquamarine: 97000000, balance: -8.62136e+09
+How many Aquamarine stones do you want to buy/loan (positive) or sell (negative)?
+(Remaining Aquamarine in stock: 3000000)
+-97000000
+Your Aquamarine: 0, balance: 1024
+How many Aquamarine stones do you want to buy/loan (positive) or sell (negative)?
+(Remaining Aquamarine in stock: 100000000)
+```
+
 
 ## Cryptography - 解密一下
-> FLAG{4lq7mWGh93}
+> FLAG{4lq7mWGh93}  
 > [solution](./crypto/solve.py)
 
 1. Modify source code to make it easier to read, from [encrypt.py](./crypto/encrypt.py) to [modifiedEncrypt.py](./crypto/modifiedEncrypt.py).
