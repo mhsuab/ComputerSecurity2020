@@ -38,6 +38,7 @@ while seed < NOW:
     print (pt, end = '\r')
     if b'flag{' in pt or b'FLAG{' in pt:
         print (str(seed) + ' ' * 64)
-        print (pt)
+        print (time.ctime(seed))
+        print (pt.decode())
         break
     seed += 1

@@ -83,3 +83,20 @@
    Find a function, `fun1`, that never been called but call `system("/bin/sh")`. However, if call `func1`, it needs to fulfill certain requirement to jump to where it call `system("/bin/sh")`. Therefore, let it jump to `0x401195` directly.
 3. Combine step 1 and 2.  
    `payload = 'a' * (0x10 + 8) + p64(0x401195)`
+
+## Misc - The Floating Aquamarine
+
+## Cryptography - 解密一下
+> FLAG{4lq7mWGh93}
+> [solution](./crypto/solve.py)
+
+1. Modify source code to make it easier to read, from [encrypt.py](./crypto/encrypt.py) to [modifiedEncrypt.py](./crypto/modifiedEncrypt.py).
+2. Use `time.time()` as seed for random. Therefore, by guessing around what time the [output.txt](./crypto/output.txt) is generated, the key possibility of key can be redused.
+   ```python
+   random.seed(int(time.time()))
+   key = random.getrandbits(128).to_bytes(16, 'big')
+   ```
+3. Implement `decrypt` function for the corresponding `encrypt`.
+4. Guess [output.txt](./crypto/output.txt) is the result of [encrypt.py](./crypto/encrypt.py) `n` days ago. Starting from `n` days ago, start brute force :joy:.
+
+## Reverse - EekumBokum
