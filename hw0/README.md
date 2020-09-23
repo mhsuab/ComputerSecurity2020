@@ -88,7 +88,7 @@
 > FLAG{floating_point_error_https://0.30000000000000004.com/}  
 > [solution](./misc/solve.py)  
 
-From [src.cpp](./hw0/../misc/src.cpp), variable `PRICE, RICH, balance` are `float`. Therefore, the vulnerability may be due the precision of floating point. By buying a large amount and sell with little portion, one can possibly gain money as demonstrated below. By repeat it multiple times, we are able to make `balance` larger than `RICH`.
+From [src.cpp](./hw0/../misc/src.cpp), find that variable `PRICE, RICH, balance` are `float`. Therefore, the vulnerability may be due the precision of floating point. By buying a large amount and spliting to little portion for selling, one can possibly gain money as demonstrated below. Finally, by repeat it multiple times, we are able to make `balance` larger than `RICH`.
 ```shell
 $ nc hw00.zoolab.org 65535
 Welcome to Aquamarine bank! You can buy/loan and sell Aquamarine here.
@@ -151,3 +151,38 @@ How many Aquamarine stones do you want to buy/loan (positive) or sell (negative)
    - Knowing that the flag has initial `flag{` or `FLAG`, stop when find a decrypted text has such initial and print out its seed and the result.
 
 ## Reverse - EekumBokum
+> flag{NANI_KORE?(=.=)EEKUM_BOKUM(=^=)EEKUM_BOKUM}
+
+1. Guess that by recovering the left image back to the right one one can get *flag*. However, we can only control the very right bottom grid.
+   ![](./reverse/images/original.png)
+2. Use `file` to check the binary.
+   ```shell
+   $ file EekumBokum.exe
+   EekumBokum.exe: PE32 executable (GUI) Intel 80386 Mono/.Net assembly, for MS Windows
+   ```
+3. Find a `.NET` decompiler, [dotPeek](https://www.jetbrains.com/decompiler/), to decompile *.NET assembly* to *C#*.
+   ![](./reverse/images/dotPeek.png)
+4. Export files to **Visual Studio Project**.
+   ![](./reverse/images/toProject.png)
+5. Fix all the errors.
+   ![](./reverse/images/fixError.png)
+6. Adjust the codes.
+   `Form1.cs`
+   ```csharp
+   private void samonCheck(List<PictureBox> listPitcture)
+   {
+      List<byte> byteList = new List<byte>();
+      for (int index = 0; index < 16; ++index)
+      {
+         byteList.Add(((Bitmap) listPitcture[index].Image).GetPixel(66, 99).R);
+         if (!listPitcture[index].Image.Equals((object) this.originalPicture[index]))
+         return;
+      }
+      ......
+      int num4 = (int) MessageBox.Show("this is your flag\n" + Encoding.ASCII.GetString(bytes));
+   }
+   ```
+   Every time after key being pressed, call `samonCheck` to see whether it fulfill the requirement of getting the flag. In order to get the flag, images in increase order, all the image must be in certain order after the change.  
+   To be able to fulfill the requirement, change the `idxMovalbe` from *15* to *14*. Then, start and press *left* to make it identical to the right image.
+7. Run and get *flag*.
+   ![](reverse/images/flag.png)
