@@ -11,3 +11,6 @@ objdump
 *.id2
 *.nam
 *.til
+
+# pass all submision file
+b05901003
