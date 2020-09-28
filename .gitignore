@@ -4,7 +4,7 @@
 peda-session-*
 objdump
 
-# ida
+# pass all files of ida
 *.i64
 *.id0
 *.id1
@@ -14,3 +14,7 @@ objdump
 
 # pass all submision file
 b05901003
+writeup.md
+
+# pass nc
+server.sh

@@ -5,12 +5,13 @@
 
 1. Check *source code*
    - how to get flag?
-   ```js
-   // but the function can't be directly access by external users
-   if (givemeflag === "yes" && userInfo.admin) response.send(FLAG);
-   ```
+      ```js
+      // but the function can't be directly access by external users
+      if (givemeflag === "yes" && userInfo.admin) response.send(FLAG);
+      ```
    - where can be used?
       > `app.get('/auth', (request, response) => { const { username, cute } = request.query;`
+
       a. only check that `cute` end with `true` or `false`
       ```js
       if (typeof username !== "string" || typeof cute !== "string" || username === "" || !cute.match("(true|false)$"))
@@ -23,7 +24,7 @@
       ```js
       const api = `http://127.0.0.1:9487/?data=${userInfo}&givemeflag=no`;
       ```
-2. give a random `username` and `cute`
+2. give a random `username` and `cute`  
    `https://owohub.zoolab.org/auth?username=a&cute=true`
 3. make `admin` to be true
    `https://owohub.zoolab.org/auth?username=a&cute=true,%22admin%22:true`
@@ -146,16 +147,16 @@ How many Aquamarine stones do you want to buy/loan (positive) or sell (negative)
             last = last - delta & mask
          return cts
       ```
-      Reverse `_encrypt`. Find out the last used `count`, `0x59d60180`, and perform certain operation 32 times, reversing the order of `cts[0], cts[1]` and substracting a certain value each time.
+      Reverse `_encrypt`. Find out the last used `count`, which is `0x59d60180`, and perform certain operation 32 times, reversing the order of `cts[0], cts[1]` and substracting a certain value each time.
 4. Guess [output.txt](./crypto/output.txt) is the result of [encrypt.py](./crypto/encrypt.py) `n` days ago. Starting from `n` days ago, start brute force :joy: .
    - Knowing that the flag has initial `flag{` or `FLAG`, stop when find a decrypted text has such initial and print out its seed and the result.
 
 ## Reverse - EekumBokum
 > flag{NANI_KORE?(=.=)EEKUM_BOKUM(=^=)EEKUM_BOKUM}
 
-1. Guess that by recovering the left image back to the right one one can get *flag*. However, we can only control the very right bottom grid.
+1. Guess that by recovering the left image back to the right one one can get *flag*. However, we can only control the very right bottom grid and can never achieve the goal.  
    ![](./reverse/images/original.png)
-2. Use `file` to check the binary.
+2. Use `file` to check the binary to find out that it's a `.NET assembly`.
    ```shell
    $ file EekumBokum.exe
    EekumBokum.exe: PE32 executable (GUI) Intel 80386 Mono/.Net assembly, for MS Windows
@@ -164,7 +165,7 @@ How many Aquamarine stones do you want to buy/loan (positive) or sell (negative)
    ![](./reverse/images/dotPeek.png)
 4. Export files to **Visual Studio Project**.
    ![](./reverse/images/toProject.png)
-5. Fix all the errors.
+5. Fix all the errors due to the decompiling.
    ![](./reverse/images/fixError.png)
 6. Adjust the codes.
    `Form1.cs`
