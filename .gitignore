@@ -1,8 +1,10 @@
-.swp
+*.swp
 .DS_Store
 .gdb_history
 peda-session-*
 objdump
+*.pyc
+__pycache__
 
 # pass all files of ida
 *.i64

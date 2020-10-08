@@ -9,16 +9,10 @@ BS = 16
 def bxor(b1, b2):
     return bytes(a ^ b for a, b in zip(b1, b2))
 
-# Custom padding to avoid known padding Oracle attacks
-# Padding is as follows, say s has length 5 and BS = 16 then 11 padding bytes are needed
-# padding is chr(11) + 10 * chr(0)
 def PaddingOracle(s, ivNct, ivNcts, blockIdx):
     I = b'\x00' * BS
     for i in range(BS):
         for j in range(256):
-            ## i = 0 -> last one -> pad: chr(1)
-            ## i = 1 -> pad: chr(2) + (2 - 1) * chr(0)
-            # print (str(j).zfill(3))
             tmp = (i * b'\x00')
             mod = ivNct[:BS * (blockIdx - 1)] + I[:(15 - i)] + bytes([j]) + bxor(I[(BS - i):], tmp) + ivNcts[blockIdx]
             mod = mod.hex()

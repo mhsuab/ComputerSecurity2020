@@ -30,11 +30,12 @@ class MYLFSR:
 def xor(a, b):
     return bytes([i ^ j for i, j in zip(a, b)])
 
-FLAG = open('./flag', 'rb').read()
-assert len(FLAG) == 12
-assert FLAG.startswith(b'FLAG{')
-assert FLAG.endswith(b'}')
-FLAG = FLAG[5:-1]
+if __name__ == '__main__':
+    FLAG = open('./flag', 'rb').read()
+    assert len(FLAG) == 12
+    assert FLAG.startswith(b'FLAG{')
+    assert FLAG.endswith(b'}')
+    FLAG = FLAG[5:-1]
 
-lfsr = MYLFSR([FLAG[0:2], FLAG[2:4], FLAG[4:6]])
-print([lfsr.getbit() for _ in range(100)])
+    lfsr = MYLFSR([FLAG[0:2], FLAG[2:4], FLAG[4:6]])
+    print([lfsr.getbit() for _ in range(100)])
