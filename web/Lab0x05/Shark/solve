@@ -1,0 +1,6 @@
+command = ['Baby shark, doo doo doo doo doo doo']
+https://shark.splitline.tw/?command[]=Baby%20shark,%20doo%20doo%20doo%20doo%20doo%20doo
+
+因為有個逗號，拆成 array 中的兩個 elements
+-> command = ['Baby shark', ' doo doo doo doo doo doo]
+https://shark.splitline.tw/?command[]=Baby%20shark&command[]=%20doo%20doo%20doo%20doo%20doo%20doo

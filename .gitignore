@@ -3,8 +3,11 @@
 .gdb_history
 peda-session-*
 objdump
+
+# python related
 *.pyc
 __pycache__
+*.sage.py
 
 # pass all files of ida
 *.i64
@@ -16,7 +19,14 @@ __pycache__
 
 # pass all submision file
 b05901003*
+hw*.md
 writeup.md
 
 # pass nc
 server.sh
+
+# VS code
+.vscode
+
+# js
+node_modules

