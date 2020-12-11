@@ -1,1 +1,0 @@
-<img src="/default_meme.gif">

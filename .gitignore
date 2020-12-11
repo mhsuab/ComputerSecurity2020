@@ -30,3 +30,9 @@ server.sh
 
 # js
 node_modules
+
+# web
+web/**/src
+
+# reverse
+reverse/*.zip
