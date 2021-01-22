@@ -8,6 +8,7 @@ objdump
 *.pyc
 __pycache__
 *.sage.py
+sanity-check-script.py
 
 # pass all files of ida
 *.i64
@@ -16,6 +17,7 @@ __pycache__
 *.id2
 *.nam
 *.til
+*.idb
 
 # pass all submision file
 b05901003*
@@ -33,6 +35,18 @@ node_modules
 
 # web
 web/**/src
+hw0x06.pdf
 
 # reverse
-reverse/*.zip
+reverse/Week*/
+*.bin
+
+# pwn
+*.so
+pwn/**/distribute
+core
+
+# final
+final/code
+*.elf
+校外*
