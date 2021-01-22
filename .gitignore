@@ -47,6 +47,8 @@ pwn/**/distribute
 core
 
 # final
-final/code
-*.elf
 校外*
+final/*
+test.elf
+!final/reverse
+!final/README.md
