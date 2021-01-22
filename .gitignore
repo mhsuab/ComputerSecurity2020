@@ -33,6 +33,21 @@ server.sh
 # js
 node_modules
 
+# crypto
+crypto/blockchain/*
+!crypto/blockchain/Bet
+!crypto/blockchain/GetStarted
+!crypto/blockchain/Private
+!crypto/blockchain/ReEntrancy
+!crypto/blockchain/bet.js
+!crypto/blockchain/get.js
+!crypto/blockchain/getStarted.js
+!crypto/blockchain/lib.js
+!crypto/blockchain/package*.json
+!crypto/blockchain/private*
+!crypto/blockchain/reEntrancy.js
+!crypto/blockchain/validate.js
+
 # web
 web/**/src
 hw0x06.pdf
