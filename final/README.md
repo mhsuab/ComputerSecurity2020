@@ -114,3 +114,7 @@
 4. 利用 `grep -rnw ./ -e 'Flag'` 可以找到 `lBq5NknLuUW` 還原的結果中就包含了 flag
     > 本來直接找有沒有 `FLAG{` 卻還找不到東西，以為要悲劇了，結果其實是因為被打成 **FALG{**，複製了以後卻不管是 **FLAG** 還是 **FALG** 都通過不了，以為我找到了假的  
     > 最後居然是我後面多了 EOF......
+
+<!-- script -->
+<script type="text/javascript" async
+src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
