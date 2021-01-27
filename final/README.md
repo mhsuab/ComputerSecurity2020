@@ -16,7 +16,7 @@
         原始檔案 pad 完最後殘留 `0x00`，且 `0x00` 與任何值 **XOR**，都會保留其原始的值  
         => 藉由比較檔案最後的值和 `key` 即可知該部分的原始檔案和哪一部分的 `key` **XOR**，便可以推測出加密檔案時的 `idx` 為何  
     2. **XOR** 檔案
-        由於 `idx` 已知，且因 <!-- $pt\ \oplus\ key=\ ct\rightarrow ct\ \oplus\ key=pt$ --> <img style="transform: translateY(0.1em); background: white;" src="../svg/R3HY5I4k11.svg"> ，即可將加密過後的檔案解密
+        由於 `idx` 已知，且因 <!-- $pt\ \oplus\ key=\ ct\rightarrow ct\ \oplus\ key=pt$ --> <img style="transform: translateY(0.1em); background: white;" src="../svg/5O20bX5Eop.svg"> ，即可將加密過後的檔案解密
         ```python=
         # raw[:i + 1] => 將最後面的 padding 去掉
         result = bxor(raw[: i + 1], key[idx:] + key[:idx])
