@@ -13,10 +13,10 @@
     - 將加密過後的檔案覆蓋掉原本的檔案
 3. 還原檔案
     1. 推測 `idx` 的值  
-        原始檔案 pad 完最後殘留 `0x00`，且 `0x00` 與任何值 **XOR**，都會保留其原始的值
-        $\rightarrow$ 藉由比較檔案最後的值和 `key` 即可知該部分的原始檔案和哪一部分的 `key` **XOR**，便可以推測出加密檔案時的 `idx` 為何  
+        原始檔案 pad 完最後殘留 `0x00`，且 `0x00` 與任何值 **XOR**，都會保留其原始的值  
+        => 藉由比較檔案最後的值和 `key` 即可知該部分的原始檔案和哪一部分的 `key` **XOR**，便可以推測出加密檔案時的 `idx` 為何  
     2. **XOR** 檔案
-        由於 `idx` 已知，且因 $pt\ \oplus\ key=\ ct\rightarrow ct\ \oplus\ key=pt$ ，即可將加密過後的檔案解密
+        由於 `idx` 已知，且因 <!-- $pt\ \oplus\ key=\ ct\rightarrow ct\ \oplus\ key=pt$ --> <img style="transform: translateY(0.1em); background: white;" src="../svg/R3HY5I4k11.svg"> ，即可將加密過後的檔案解密
         ```python=
         # raw[:i + 1] => 將最後面的 padding 去掉
         result = bxor(raw[: i + 1], key[idx:] + key[:idx])
@@ -40,7 +40,7 @@
     1. 用寫死的`ct, key` **XOR** 解密出目標檔案檔名 `C:\Users\terrynini38514\Desktop\flag.txt`
     2. `fopen("C:\\Users\\terrynini38514\\Desktop\\flag.txt", "r")` 將其開啟，失敗則直接結束
     3. 用 `ExpandEnvironmentStringsA`, `PathCombineA` 產生最後加密出來檔案所要存取的位置 `%temp%\secret.txt` 的完整路徑
-        $\rightarrow$ 即題目所提供的 `secret.txt`
+        -> 即題目所提供的 `secret.txt`
     4. 以**某種演算法**將每 5 個 bytes 轉換為 16 個 bytes，並其和 hardcoded key **XOR**，再寫入 `secret.txt` 中
 6. **某種演算法？**
     找到 magic number `1732584193, 4023233417, 2562383102, 271733878`，google 後可知其應為 ***MD5***
@@ -56,10 +56,10 @@
     而且在 *abex' 1st crackme* 後，雖然是 *Error*，但可以發現此時 *YEAH!* 已經在 memory 中了
 3. 重新執行，在 `0x402000` 下 Memory Write Singleshoot breakpoint，此時 `F9` 便會使程式停在第一次嘗試寫入此 memory 的地方
 4. 因為最後是用 MessageBox，將訊息顯示出來，嘗試在各個 MessageBox 相關的 address 下斷點，最後發現其會呼叫到 `MessageBoxTimeOutA`
-    $\rightarrow$ 在 `MessageBoxTimeOutA` 下斷點
+    -> 在 `MessageBoxTimeOutA` 下斷點
 5. 第一次 trigger 時，會顯示 *abex' 1st crackme*，之後便 `F8` 一步一步執行
 6. 可在 `0x401026` 看到 `je`，且其正常情況並不會跳轉，之後便會將 `Error` 何其對應到的訊息 push 到 stack 上
-    $\rightarrow$ 在執行到此處時，強制 `ZF=1`，便可使其印出 flag
+    -> 在執行到此處時，強制 `ZF=1`，便可使其印出 flag
 > 實際解的時候在看到 `YEAH!` 後面的訊息後，直接把前面五個跟 `FLAG{` XOR 發現**結果都是 199** 後，就把整串訊息跟 119 XOR 取得 flag 了XD
 
 ## Jwang's Terminal
@@ -114,7 +114,3 @@
 4. 利用 `grep -rnw ./ -e 'Flag'` 可以找到 `lBq5NknLuUW` 還原的結果中就包含了 flag
     > 本來直接找有沒有 `FLAG{` 卻還找不到東西，以為要悲劇了，結果其實是因為被打成 **FALG{**，複製了以後卻不管是 **FLAG** 還是 **FALG** 都通過不了，以為我找到了假的  
     > 最後居然是我後面多了 EOF......
-
-<!-- script -->
-<script type="text/javascript" async
-src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
